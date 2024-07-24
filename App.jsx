@@ -23,7 +23,9 @@ export default function App() {
     function createNewNote() {
         const newNote = {
             id: nanoid(),
-            body: "# Type your markdown note's title here"
+            body: "# Type your markdown note's title here",
+            createdAt: Date.now(),
+            updatedAt: Date.now()
         }
         setNotes(prevNotes => [newNote, ...prevNotes])
         setCurrentNoteId(newNote.id)
@@ -36,7 +38,11 @@ export default function App() {
                 const oldNote = oldNotes[i]
                 if (oldNote.id === currentNoteId) {
                     // Put the most recently-modified note at the top
-                    newArray.unshift({ ...oldNote, body: text })
+                    newArray.unshift({ 
+                        ...oldNote, 
+                        body: text, 
+                        updatedAt: Date.now() 
+                    })
                 } else {
                     newArray.push(oldNote)
                 }
