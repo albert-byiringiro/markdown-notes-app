@@ -119,6 +119,9 @@ const currentNote =
     notes.find(note => note.id === currentNoteId) 
     || notes[0]
 
+const sortedNotes = notes.sort((a, b) => b.updatedAt - a.updatedAt)
+
+
 React.useEffect(() => {
     localStorage.setItem("notes", JSON.stringify(notes))
 }, [notes])
@@ -126,7 +129,9 @@ React.useEffect(() => {
 function createNewNote() {
     const newNote = {
         id: nanoid(),
-        body: "# Type your markdown note's title here"
+        body: "# Type your markdown note's title here",
+        createdAt: Date.now(),
+        updatedAt: Date.now()
     }
     setNotes(prevNotes => [newNote, ...prevNotes])
     setCurrentNoteId(newNote.id)
@@ -139,7 +144,7 @@ function updateNote(text) {
             const oldNote = oldNotes[i]
             if (oldNote.id === currentNoteId) {
                 // Put the most recently-modified note at the top
-                newArray.unshift({ ...oldNote, body: text })
+                newArray.unshift({ ...oldNote, body: text, updatedAt: Date.now() })
             } else {
                 newArray.push(oldNote)
             }
@@ -164,7 +169,7 @@ return (
                     className="split"
                 >
                     <Sidebar
-                        notes={notes}
+                        notes={sortedNotes}
                         currentNote={currentNote}
                         setCurrentNoteId={setCurrentNoteId}
                         newNote={createNewNote}
