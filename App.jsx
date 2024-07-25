@@ -5,6 +5,16 @@ import Split from "react-split"
 import { nanoid } from "nanoid"
 
 export default function App() {
+    
+    const [notes, setNotes] = React.useState(
+        () => JSON.parse(localStorage.getItem("notes")) || []
+    )
+    const [currentNoteId, setCurrentNoteId] = React.useState(
+        (notes[0]?.id) || ""
+    )
+
+    const [tempNoteText, setTempNoteText] = React.useState("")
+    
 
         /**
      * Challenge:
@@ -15,14 +25,8 @@ export default function App() {
      *    correct text.
      * 4. TBA
      */
-    
 
-const [notes, setNotes] = React.useState(
-    () => JSON.parse(localStorage.getItem("notes")) || []
-)
-const [currentNoteId, setCurrentNoteId] = React.useState(
-    (notes[0]?.id) || ""
-)
+
 
 const currentNote = 
     notes.find(note => note.id === currentNoteId) 
@@ -32,8 +36,36 @@ const sortedNotes = notes.sort((a, b) => b.updatedAt - a.updatedAt)
 
 
 React.useEffect(() => {
+    if (currentNote) {
+        setTempNoteText(currentNote.body)
+    }
+}, [currentNote])
+
+React.useEffect(() => {
     localStorage.setItem("notes", JSON.stringify(notes))
 }, [notes])
+
+
+// React.useEffect(() => {
+//     const timeoutId = setTimeout(() => {
+//         if (tempNoteText !== currentNote.body) {
+//             updateNote(tempNoteText)
+//         }
+//     }, 500)
+//     return () => clearTimeout(timeoutId)
+// }, [tempNoteText])
+
+
+React.useEffect(()=>{
+    const timeoutId = setTimeout(() => {
+        if(tempNoteText !== currentNote.body){
+            updateNote(tempNoteText)
+        }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+})
+
 
 function createNewNote() {
     const newNote = {
@@ -88,8 +120,8 @@ return (
                         currentNoteId &&
                         notes.length > 0 &&
                         <Editor
-                            currentNote={currentNote}
-                            updateNote={updateNote}
+                        tempNoteText={tempNoteText}
+                        setTempNoteText={setTempNoteText}
                         />
                     }
                 </Split>
