@@ -6,19 +6,6 @@ import { nanoid } from "nanoid"
 
 export default function App() {
 
-        /**
-     * Challenge:
-     * 1. ✅ Add createdAt and updatedAt properties to the notes
-     *    When a note is first created, set the `createdAt` and `updatedAt`
-     *    properties to `Date.now()`. Whenever a note is modified, set the
-     *    `updatedAt` property to `Date.now()`.
-     * 
-     * 2. Create a new `sortedNotes` array (doesn't need to be saved 
-     *    in state) that orders the items in the array from 
-     *    most-recently-updated to least-recently-updated.
-     *    This may require a quick Google search.
-     */
-
     const [notes, setNotes] = React.useState(
         () => JSON.parse(localStorage.getItem("notes")) || []
     )
@@ -29,10 +16,17 @@ export default function App() {
     const sortedNotes = notes.sort((a, b) => b.updatedAt - a.updatedAt)
     console.log(sortedNotes)
 
+    const [tempNodeText, setTempNodeText] = React.useState("");
     
     const currentNote = 
         notes.find(note => note.id === currentNoteId) 
-        || notes[0]
+        || notes[0];
+    
+    React.useEffect(()=>{
+        setTempNodeText(prevTemp => prevTemp = currentNote.body)
+    }, [currentNote])
+
+    
 
     React.useEffect(() => {
         localStorage.setItem("notes", JSON.stringify(notes))
@@ -95,7 +89,7 @@ export default function App() {
                             currentNoteId &&
                             notes.length > 0 &&
                             <Editor
-                                currentNote={currentNote}
+                                currentNote={tempNodeText}
                                 updateNote={updateNote}
                             />
                         }
